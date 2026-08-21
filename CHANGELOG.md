@@ -8,7 +8,7 @@ This project follows semantic versioning where practical.
 
 ### Added
 
-- Initial Astro 6 theme release for Atelier Kō.
+- Initial Astro 6 theme release for Lumavia Stone.
 - Static homepage, catalogue, product detail pages, about page, cart page, and 404 page.
 - Product catalogue entries managed through Astro content collections.
 - Vanilla JavaScript enhancements for catalogue filters, product gallery, newsletter preview, and local cart.

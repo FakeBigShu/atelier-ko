@@ -1,15 +1,15 @@
-# Atelier Kō - Minimalist Furniture Store Theme
+# Lumavia Stone - Minimalist Furniture Store Theme
 
-[![Atelier Kō theme preview](preview.webp)](https://atelier-ko-topaz.vercel.app/)
+[![Lumavia Stone theme preview](preview.webp)](https://lumaviastone.com/)
 
 ![Astro 6](https://img.shields.io/badge/Astro-6.4.8-ff5d01?style=for-the-badge&logo=astro&logoColor=white)
 ![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4.1-38bdf8?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
 ![MIT License](https://img.shields.io/badge/License-MIT-27272a?style=for-the-badge)
 
-Preview: [https://atelier-ko-topaz.vercel.app/](https://atelier-ko-topaz.vercel.app/)
+Preview: [https://lumaviastone.com/](https://lumaviastone.com/)
 
-Atelier Kō is a quiet, editorial Astro theme for a small furniture atelier or craft-led product catalogue. Fully static, with small JavaScript enhancements for the catalogue filters, product gallery, and local cart.
+Lumavia Stone is a quiet, editorial Astro theme for a small furniture atelier or craft-led product catalogue. Fully static, with small JavaScript enhancements for the catalogue filters, product gallery, and local cart.
 
 ## Features
 
@@ -59,7 +59,7 @@ Update the production URL before publishing:
 SITE=https://your-domain.com npm run build
 ```
 
-The configured `site` value is used for canonical URLs, sitemap generation, and `robots.txt`. The default preview site is `https://atelier-ko-topaz.vercel.app/`.
+The configured `site` value is used for canonical URLs, sitemap generation, and `robots.txt`. The default preview site is `https://lumaviastone.com/`.
 
 Main content files:
 

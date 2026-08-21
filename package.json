@@ -1,8 +1,8 @@
 {
-  "name": "atelier-ko-astro-theme",
+  "name": "lumavia-stone-website",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://atelier-ko-topaz.vercel.app/",
+  "homepage": "https://lumaviastone.com/",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

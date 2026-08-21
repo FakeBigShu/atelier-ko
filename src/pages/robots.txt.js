@@ -1,10 +1,18 @@
-export function GET({ site }) {
-  const baseUrl = site ?? new URL("https://atelier-ko-topaz.vercel.app");
-  const sitemapUrl = new URL("/sitemap-index.xml", baseUrl);
+import { SITE_URL } from "../config";
 
-  return new Response(`User-agent: *\nAllow: /\n\nSitemap: ${sitemapUrl.href}\n`, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+export const GET = ({ site }) => {
+  const baseUrl = site ?? new URL("https://lumaviastone.com");
+
+  return new Response(
+    `User-agent: *
+Allow: /
+
+Sitemap: ${new URL("sitemap-index.xml", baseUrl).href}
+`,
+    {
+      headers: {
+        "Content-Type": "text/plain",
+      },
     },
-  });
-}
+  );
+};
