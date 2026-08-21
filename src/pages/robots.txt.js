@@ -1,5 +1,3 @@
-import { SITE_URL } from "../config";
-
 export const GET = ({ site }) => {
   const baseUrl = site ?? new URL("https://lumaviastone.com");
 
