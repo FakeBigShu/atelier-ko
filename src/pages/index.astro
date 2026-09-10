@@ -1,11 +1,18 @@
 ---
-import { Image } from "astro:assets";
+import { siteConfig } from "@/config/site";
+import ProductBody from "@/components/ProductBody.astro";
+import { pageUrl } from "@/utils/urls";
+import { Image, getImage } from "astro:assets";
 import ProductCard from "@/components/ProductCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import heroImg from "@/assets/atelier-hero.jpg";
 import { formatPrice, getProducts } from "@/data/products.ts";
 
-const products = await getProducts("stone-planter");
+const products = await getProducts();
+const [mobileHero, desktopHero] = await Promise.all([
+  getImage({ src: heroImg, width: 1600, height: 1280, widths: [480, 768, 1024, 1600], format: "webp" }),
+  getImage({ src: heroImg, width: 2000, height: 1400, widths: [1024, 1440, 1920, 2000], format: "webp" }),
+]);
 
 const featuredSlugs = [
   "stone-planter",
@@ -29,14 +36,14 @@ if (!solo) {
 ---
 
 <BaseLayout
-  title="Lumavia Stone — Natural Stone & Garden Sculpture"
+  title={`${siteConfig.brandName} — ${siteConfig.tagline}`}
   description="Natural stone products, garden sculpture, and custom stone carving for gardens, landscapes, and architectural spaces."
   image={heroImg}
 >
   <main id="main-content">
 
     <h1 class="sr-only">
-      Lumavia Stone — Natural Stone & Garden Sculpture
+      {siteConfig.brandName} — {siteConfig.tagline}
     </h1>
 
 
@@ -46,21 +53,25 @@ if (!solo) {
 
     <section class="relative overflow-hidden bg-base">
 
-      <!-- Mobile Hero -->
-      <div class="md:hidden">
+      <!-- One image element; media sources preserve the original mobile/desktop framing. -->
+      <picture class="block aspect-[4/3] w-full md:absolute md:inset-0 md:aspect-auto">
+        <source media="(min-width: 768px)" srcset={desktopHero.srcSet.attribute} sizes="100vw" width={2000} height={1400} />
+        <img
+          src={mobileHero.src}
+          srcset={mobileHero.srcSet.attribute}
+          sizes="100vw"
+          width={1600}
+          height={1280}
+          alt="Natural stone sculpture in an outdoor setting"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="h-full w-full object-cover object-right"
+        />
+      </picture>
 
-        <div class="aspect-[4/3] w-full">
-          <Image
-            src={heroImg}
-            alt="Natural stone sculpture in an outdoor setting"
-            width={1600}
-            height={1280}
-            format="webp"
-            loading="eager"
-            decoding="sync"
-            class="h-full w-full object-cover object-right"
-          />
-        </div>
+      <!-- Mobile Hero content -->
+      <div class="md:hidden">
 
         <div class="space-y-6 px-6 py-12">
 
@@ -93,7 +104,7 @@ if (!solo) {
           >
 
             <a
-              href="/catalog"
+              href="/catalog/"
               class="group inline-flex items-center gap-3 rounded-full bg-ink px-7 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--color-base)] transition-colors hover:bg-accent"
             >
               Explore Collections
@@ -107,7 +118,7 @@ if (!solo) {
             </a>
 
             <a
-              href="/about"
+              href="/about/"
               class="text-[11px] uppercase tracking-[0.2em] text-faded transition-colors hover:text-ink"
             >
               About Lumavia →
@@ -127,20 +138,6 @@ if (!solo) {
       <div
         class="relative hidden h-[88vh] max-h-[920px] min-h-[640px] w-full md:block"
       >
-
-        <!-- Full-width background image -->
-
-        <Image
-          src={heroImg}
-          alt="Natural stone sculpture in an outdoor setting"
-          width={2000}
-          height={1400}
-          format="webp"
-          loading="eager"
-          decoding="sync"
-          class="absolute inset-0 h-full w-full object-cover object-right"
-        />
-
 
         <!-- Left gradient -->
 
@@ -200,7 +197,7 @@ if (!solo) {
             <div class="flex items-center gap-6 pt-2">
 
               <a
-                href="/catalog"
+                href="/catalog/"
                 class="group inline-flex items-center gap-3 rounded-full bg-ink px-7 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--color-base)] transition-colors hover:bg-accent"
               >
                 Explore Collections
@@ -215,7 +212,7 @@ if (!solo) {
 
 
               <a
-                href="/about"
+                href="/about/"
                 class="text-[11px] uppercase tracking-[0.2em] text-faded transition-colors hover:text-ink"
               >
                 About Lumavia →
@@ -284,7 +281,7 @@ if (!solo) {
 
 
         <a
-          href="/catalog"
+          href="/catalog/"
           class="hidden items-center gap-2 whitespace-nowrap text-[11px] uppercase tracking-[0.2em] text-faded transition-colors hover:text-ink md:inline-flex"
         >
           View all
@@ -311,7 +308,7 @@ if (!solo) {
       <div class="mt-10 flex justify-center md:hidden">
 
         <a
-          href="/catalog"
+          href="/catalog/"
           class="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-faded transition-colors hover:text-ink"
         >
           View all collections →
@@ -337,15 +334,17 @@ if (!solo) {
           <div class="md:col-span-7 lg:col-span-8">
 
             <a
-              href={`/products/${solo.slug}`}
+              href={`/products/${solo.slug}/`}
               class="group block aspect-[5/4] overflow-hidden rounded-[min(1vw,16px)] bg-paper md:aspect-[16/11]"
             >
 
               <Image
-                src={solo.images[0]}
-                alt={`${solo.name} — ${solo.shortDescription}`}
-                width={1600}
-                height={1100}
+                src={solo.images[0].src}
+                alt={solo.images[0].alt ?? `${solo.name} — ${solo.shortDescription}`}
+                width={960}
+                height={660}
+                widths={[400, 640, 960, 1280, 1600]}
+                sizes="(min-width: 1536px) 960px, (min-width: 1024px) calc((100vw - 112px) * 2 / 3), (min-width: 768px) calc((100vw - 112px) * 7 / 12), calc(100vw - 48px)"
                 loading="lazy"
                 format="webp"
                 class="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.02]"
@@ -380,11 +379,7 @@ if (!solo) {
             </h2>
 
 
-            <p
-              class="text-pretty leading-relaxed text-faded"
-            >
-              {solo.description}
-            </p>
+            <ProductBody product={solo} class="text-pretty leading-relaxed text-faded" />
 
 
             <dl
@@ -438,7 +433,7 @@ if (!solo) {
 
 
             <a
-              href={`/products/${solo.slug}`}
+              href={`/products/${solo.slug}/`}
               class="inline-flex items-center gap-3 rounded-full bg-ink px-6 py-3.5 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--color-base)] transition-colors hover:bg-accent"
             >
               View the piece →
@@ -538,119 +533,6 @@ if (!solo) {
 
 
     <!-- ========================================================= -->
-    <!-- NEWSLETTER -->
-    <!-- ========================================================= -->
-
-    <section
-      class="mx-auto mt-32 max-w-screen-xl px-6 md:mt-48"
-    >
-
-      <div class="border-t border-line pt-12">
-
-        <div
-          class="mx-auto max-w-xl space-y-6 text-center"
-        >
-
-          <p
-            class="text-[11px] uppercase tracking-[0.3em] text-faded"
-          >
-            Stay informed
-          </p>
-
-
-          <h2
-            class="text-balance font-serif text-3xl md:text-5xl"
-          >
-            New collections,
-
-            <span class="italic text-accent">
-              one email at a time.
-            </span>
-          </h2>
-
-
-          <p
-            class="mx-auto max-w-[52ch] text-sm leading-relaxed text-faded"
-          >
-            Follow new stone pieces, project updates, and custom carving opportunities from Lumavia Stone.
-          </p>
-
-
-          <form
-            class="space-y-3 pt-4 text-left"
-            data-newsletter-form
-          >
-
-            <div
-              class="flex flex-col gap-3 sm:flex-row"
-            >
-
-              <label
-                class="sr-only"
-                for="first-name"
-              >
-                First name
-              </label>
-
-
-              <input
-                id="first-name"
-                name="firstName"
-                type="text"
-                required
-                maxlength="80"
-                placeholder="First name"
-                class="flex-1 rounded-full bg-paper px-5 py-4 text-sm text-ink placeholder:text-faded/60 focus:outline-none focus:ring-1 focus:ring-ink disabled:opacity-50"
-              />
-
-
-              <label
-                class="sr-only"
-                for="email"
-              >
-                Email address
-              </label>
-
-
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="your@email.com"
-                class="flex-1 rounded-full bg-paper px-5 py-4 text-sm text-ink placeholder:text-faded/60 focus:outline-none focus:ring-1 focus:ring-ink disabled:opacity-50"
-              />
-
-            </div>
-
-
-            <button
-              type="submit"
-              class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-7 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--color-base)] transition-colors hover:bg-accent disabled:opacity-50"
-              data-newsletter-button
-            >
-              Notify me
-            </button>
-
-
-            <p
-              class="hidden pt-2 text-center text-sm text-accent"
-              data-newsletter-success
-              aria-live="polite"
-            >
-              You're on the list. We'll be in touch.
-            </p>
-
-          </form>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================================================= -->
     <!-- STRUCTURED DATA -->
     <!-- ========================================================= -->
 
@@ -660,12 +542,9 @@ if (!solo) {
       set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
-        name: "Lumavia Stone",
-        url:
-          Astro.site?.href ??
-          "https://lumaviastone.com/",
-        slogan:
-          "Natural Stone & Garden Sculpture",
+        name: siteConfig.brandName,
+        url: pageUrl("/", Astro.site ?? siteConfig.siteUrl).href,
+        slogan: siteConfig.tagline,
         address: {
           "@type": "PostalAddress",
           addressRegion: "Hebei",
@@ -674,41 +553,6 @@ if (!solo) {
       })}
     ></script>
 
-
-    <!-- ========================================================= -->
-    <!-- NEWSLETTER SCRIPT -->
-    <!-- ========================================================= -->
-
-    <script>
-      const form =
-        document.querySelector("[data-newsletter-form]");
-
-      if (form) {
-        const button =
-          form.querySelector("[data-newsletter-button]");
-
-        const success =
-          form.querySelector("[data-newsletter-success]");
-
-        form.addEventListener("submit", (event) => {
-          event.preventDefault();
-
-          if (button && success) {
-            button.setAttribute("disabled", "true");
-            button.textContent = "Saving...";
-
-            window.setTimeout(() => {
-              form.reset();
-
-              button.removeAttribute("disabled");
-              button.textContent = "Notify me";
-
-              success.classList.remove("hidden");
-            }, 450);
-          }
-        });
-      }
-    </script>
 
   </main>
 </BaseLayout>

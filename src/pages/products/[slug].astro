@@ -1,4 +1,7 @@
 ---
+import { siteConfig } from "@/config/site";
+import ProductBody from "@/components/ProductBody.astro";
+import { pageUrl } from "@/utils/urls";
 import { Image } from "astro:assets";
 import ProductCard from "@/components/ProductCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -17,17 +20,20 @@ export async function getStaticPaths() {
 }
 
 const { product, related } = Astro.props;
+const quoteParams = new URLSearchParams({ product: product.name, slug: product.slug });
+const [contactPage, contactAnchor] = siteConfig.contactPath.split("#");
+const quoteHref = `${contactPage}?${quoteParams}#${contactAnchor}`;
 
-const productUrl = new URL(
-  `/products/${product.slug}`,
+const productUrl = pageUrl(
+  `/products/${product.slug}/`,
   Astro.site ?? Astro.url.origin,
 ).href;
 ---
 
 <BaseLayout
-  title={`${product.name} — Lumavia Stone`}
-  description={product.description.slice(0, 155)}
-  image={product.images[0]}
+  title={`${product.name} — ${siteConfig.brandName}`}
+  description={product.shortDescription}
+  image={product.images[0].src}
 >
   <main id="main-content">
     <div class="mx-auto max-w-screen-xl px-6 pt-8">
@@ -35,7 +41,7 @@ const productUrl = new URL(
         class="flex gap-2 text-xs uppercase tracking-widest text-faded"
         aria-label="Breadcrumb"
       >
-        <a href="/catalog" class="hover:text-ink">Catalogue</a>
+        <a href="/catalog/" class="hover:text-ink">Catalogue</a>
         <span aria-hidden="true">/</span>
         <span class="text-ink" aria-current="page">{product.name}</span>
       </nav>
@@ -63,10 +69,13 @@ const productUrl = new URL(
                   data-gallery-panel={index}
                 >
                   <Image
-                    src={image}
-                    alt={`${product.name} — view ${index + 1}`}
-                    width={1440}
-                    height={1800}
+                    src={image.src}
+                    alt={image.alt ?? `${product.name} — view ${index + 1}`}
+                    width={800}
+                    height={1000}
+                    widths={[400, 640, 800, 1024, 1440]}
+                    sizes="(min-width: 1280px) 692px, (min-width: 1024px) calc((100vw - 112px) * 7 / 12), calc(100vw - 48px)"
+                    fetchpriority={index === 0 ? "high" : "auto"}
                     format="webp"
                     loading={index === 0 ? "eager" : "lazy"}
                     class="fade-in h-full w-full object-cover"
@@ -92,10 +101,12 @@ const productUrl = new URL(
                   aria-pressed={index === 0 ? "true" : "false"}
                 >
                   <Image
-                    src={image}
+                    src={image.src}
                     alt=""
                     width={360}
                     height={360}
+                    widths={[120, 240, 360, 480]}
+                    sizes="(min-width: 1280px) 220px, (min-width: 1024px) calc((100vw - 176px) * 7 / 36), calc((100vw - 80px) / 3)"
                     format="webp"
                     loading="lazy"
                     class="h-full w-full object-cover"
@@ -127,11 +138,7 @@ const productUrl = new URL(
           </div>
 
           <div class="space-y-6">
-            <p
-              class="max-w-[44ch] text-pretty leading-relaxed text-faded"
-            >
-              {product.description}
-            </p>
+            <ProductBody product={product} class="max-w-[44ch] text-pretty leading-relaxed text-faded" />
 
             <dl class="space-y-3">
               <div
@@ -164,13 +171,12 @@ const productUrl = new URL(
             </dl>
           </div>
 
-          <button
-            type="button"
-            data-add-to-cart={product.slug}
-            class="w-full rounded-full bg-ink py-4 text-sm font-medium text-[var(--color-base)] ring-1 ring-ink transition-all hover:bg-accent hover:ring-accent active:scale-[0.98]"
+          <a
+            href={quoteHref}
+            class="block text-center w-full rounded-full bg-ink py-4 text-sm font-medium text-[var(--color-base)] ring-1 ring-ink transition-all hover:bg-accent hover:ring-accent active:scale-[0.98]"
           >
-            Add to Collection
-          </button>
+            Request a Quote
+          </a>
 
           <p class="text-[11px] uppercase tracking-widest text-faded">
             Product availability and shipping details available on request.
@@ -188,7 +194,7 @@ const productUrl = new URL(
           </h2>
 
           <a
-            href="/catalog"
+            href="/catalog/"
             class="text-xs uppercase tracking-widest underline underline-offset-4 hover:text-accent"
           >
             View all
@@ -213,13 +219,13 @@ const productUrl = new URL(
         "@context": "https://schema.org",
         "@type": "Product",
         name: product.name,
-        description: product.description,
+        description: product.shortDescription,
         image: product.images.map(
-          (image) => new URL(image.src, Astro.url.origin).href,
+          (image) => new URL(image.src.src, Astro.site ?? Astro.url.origin).href,
         ),
         brand: {
           "@type": "Brand",
-          name: "Lumavia Stone",
+          name: siteConfig.brandName,
         },
         material: product.material,
         url: productUrl,
@@ -273,29 +279,6 @@ const productUrl = new URL(
         });
       }
 
-      const addButton =
-        document.querySelector("[data-add-to-cart]");
-
-      if (addButton && window.LumaviaCart) {
-        const originalText = addButton.textContent;
-        let timer;
-
-        addButton.addEventListener("click", () => {
-          window.LumaviaCart.add(
-            addButton.dataset.addToCart,
-            1,
-          );
-
-          addButton.textContent =
-            "Added to your collection →";
-
-          window.clearTimeout(timer);
-
-          timer = window.setTimeout(() => {
-            addButton.textContent = originalText;
-          }, 1800);
-        });
-      }
     </script>
   </main>
 </BaseLayout>

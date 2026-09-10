@@ -1,14 +1,10 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
 type ProductEntry = CollectionEntry<"products">;
-export type Product = ProductEntry["data"] & { slug: string; description: string };
+export type Product = ProductEntry["data"] & { slug: string; entry: ProductEntry };
 
 function slugFromEntry(entry: ProductEntry): string {
   return entry.id.replace(/\.(md|mdx)$/, "");
-}
-
-function descriptionFromEntry(entry: ProductEntry): string {
-  return (entry.body ?? "").trim().replace(/\s+/g, " ");
 }
 
 function byOrderThenName(a: Product, b: Product): number {
@@ -20,15 +16,10 @@ export async function getProducts(): Promise<Product[]> {
   return entries
     .map((entry: ProductEntry) => ({
       slug: slugFromEntry(entry),
-      description: descriptionFromEntry(entry),
+      entry,
       ...entry.data,
     }))
     .sort(byOrderThenName);
-}
-
-export async function getProduct(slug: string): Promise<Product | undefined> {
-  const products = await getProducts();
-  return products.find((product) => product.slug === slug);
 }
 
 export function getRelated(products: Product[], slug: string, limit = 3): Product[] {
@@ -47,11 +38,9 @@ export function getRelated(products: Product[], slug: string, limit = 3): Produc
 
 export function getProductFilters(products: Product[]): {
   categories: string[];
-  materials: string[];
 } {
   return {
     categories: [...new Set(products.map((product) => product.category))],
-    materials: [...new Set(products.map((product) => product.material))],
   };
 }
 
@@ -61,20 +50,4 @@ export function formatPrice(value: number): string {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value);
-}
-
-export function productForJson(product: Product) {
-  return {
-    slug: product.slug,
-    name: product.name,
-    collection: product.collection,
-    category: product.category,
-    material: product.material,
-    price: product.price,
-    shortDescription: product.shortDescription,
-    description: product.description,
-    dimensions: product.dimensions,
-    finish: product.finish,
-    leadTime: product.leadTime,
-  };
 }

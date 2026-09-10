@@ -1,0 +1,21 @@
+---
+import { render } from "astro:content";
+import type { Product } from "@/data/products";
+interface Props { product: Product; class?: string; }
+const { product, class: className } = Astro.props;
+const { Content } = await render(product.entry);
+---
+<div class:list={["product-body", className]}><Content /></div>
+<style>
+  .product-body :global(> * + *) { margin-top: 1em; }
+  .product-body :global(ul) { list-style: disc; padding-left: 1.5em; }
+  .product-body :global(ol) { list-style: decimal; padding-left: 1.5em; }
+  .product-body :global(a) { text-decoration: underline; text-underline-offset: 0.2em; }
+  .product-body :global(h2), .product-body :global(h3), .product-body :global(h4) {
+    font-family: var(--font-serif); color: var(--color-ink); line-height: 1.2;
+  }
+  .product-body :global(h2) { font-size: 1.5em; }
+  .product-body :global(h3) { font-size: 1.25em; }
+  .product-body :global(blockquote) { border-left: 2px solid var(--color-line); padding-left: 1em; }
+  .product-body :global(pre) { overflow-x: auto; padding: 1em; }
+</style>

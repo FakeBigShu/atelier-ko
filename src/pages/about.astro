@@ -1,13 +1,16 @@
 ---
+import { siteConfig } from "@/config/site";
+import { getProducts } from "@/data/products";
 import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import handsImg from "@/assets/atelier-hands.jpg";
 import workshopImg from "@/assets/atelier-workshop.jpg";
+const inquiryProducts = (await getProducts()).map(({ name, slug }) => ({ name, slug }));
 ---
 
 <BaseLayout
-  title="About — Lumavia Stone"
-  description="Learn about Lumavia Stone, our natural stone craftsmanship, and our approach to garden sculpture, landscape products, and custom stone carving in Quyang, China."
+  title={`About — ${siteConfig.brandName}`}
+  description={`Learn about ${siteConfig.brandName}, our natural stone craftsmanship, and our approach to garden sculpture, landscape products, and custom stone carving in Quyang, China.`}
   image={workshopImg}
 >
   <main id="main-content">
@@ -16,7 +19,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
 
       <p class="mb-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-faded">
         <span class="inline-block h-px w-8 bg-ink/40"></span>
-        About Lumavia Stone
+        About {siteConfig.brandName}
       </p>
 
       <h1 class="max-w-[18ch] text-balance font-serif text-5xl leading-[0.95] md:text-7xl">
@@ -25,7 +28,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
       </h1>
 
       <p class="mt-8 max-w-[58ch] text-lg leading-relaxed text-faded">
-        Lumavia Stone is a natural stone supplier and stone craftsmanship
+        {siteConfig.brandName} is a natural stone supplier and stone craftsmanship
         company based in Quyang, China. We develop and supply stone products
         for gardens, landscapes, architectural spaces, and custom projects.
         Our work combines traditional stone craftsmanship with practical
@@ -40,8 +43,10 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
       <Image
         src={workshopImg}
         alt="Stone craftsmanship workshop in Quyang, China"
-        width={1920}
-        height={1080}
+        width={1280}
+        height={720}
+        widths={[480, 768, 1280, 1600, 1920]}
+        sizes="100vw"
         format="webp"
         loading="eager"
         class="h-[50vh] w-full object-cover md:h-[70vh]"
@@ -74,7 +79,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
         </p>
 
         <p>
-          Lumavia Stone builds on this craftsmanship while focusing on the
+          {siteConfig.brandName} builds on this craftsmanship while focusing on the
           needs of today's international buyers. We work with selected
           workshops and stone craftsmen to develop products that combine
           natural materials, reliable production, and practical requirements
@@ -146,8 +151,10 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
             <Image
               src={handsImg}
               alt="Craftsman's hands working on a natural stone piece"
-              width={1080}
-              height={1440}
+              width={720}
+              height={960}
+              widths={[360, 540, 720, 1080]}
+              sizes="(min-width: 1536px) 583px, (min-width: 768px) calc((100vw - 112px) * 5 / 12), calc(100vw - 48px)"
               format="webp"
               loading="lazy"
               class="h-full w-full object-cover"
@@ -181,7 +188,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
 
 
           <p class="text-xs uppercase tracking-[0.25em] text-faded">
-            — Lumavia Stone
+            — {siteConfig.brandName}
           </p>
 
 
@@ -209,7 +216,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
         {
           [
             { n: "01", l: "Stone Craftsmanship" },
-            { n: "06", l: "Current Product Types" },
+            { n: String(inquiryProducts.length).padStart(2, "0"), l: "Current Product Types" },
             { n: "100%", l: "Natural Stone Focus" },
             { n: "8–10", l: "Typical Lead Time" },
           ].map((stat) => (
@@ -232,7 +239,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
     </section>
 
 
-    <section id="studio" class="mx-auto mb-32 mt-12 max-w-screen-xl px-6 md:mt-16">
+    <section id="studio" data-inquiry-products={JSON.stringify(inquiryProducts)} class="mx-auto mb-32 mt-12 max-w-screen-xl px-6 md:mt-16">
 
       <div class="grid items-end gap-10 md:grid-cols-12">
 
@@ -242,6 +249,7 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
             Explore our collections,
             or begin with a custom stone project.
           </h2>
+          <p hidden data-inquiry-summary class="mt-4 text-sm text-faded" aria-live="polite"></p>
 
         </div>
 
@@ -249,14 +257,15 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
         <div class="flex flex-col gap-4 sm:flex-row md:col-span-5 md:justify-end">
 
           <a
-            href="/catalog"
+            href="/catalog/"
             class="inline-flex items-center justify-center gap-3 rounded-full bg-ink px-7 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--color-base)] transition-colors hover:bg-accent"
           >
             Explore the Catalogue →
           </a>
 
           <a
-            href="mailto:studio@lumaviastone.com"
+            data-inquiry-email
+            href={`mailto:${siteConfig.emails.studio}`}
             class="inline-flex items-center justify-center gap-3 rounded-full px-7 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-ink ring-1 ring-line transition-colors hover:bg-paper"
           >
             Contact Lumavia
@@ -268,5 +277,25 @@ import workshopImg from "@/assets/atelier-workshop.jpg";
 
     </section>
 
+    <script>
+      const contact = document.querySelector<HTMLElement>("[data-inquiry-products]");
+      const summary = contact?.querySelector<HTMLElement>("[data-inquiry-summary]");
+      const email = contact?.querySelector<HTMLAnchorElement>("[data-inquiry-email]");
+      if (contact && summary && email) {
+        const products: { name: string; slug: string }[] = JSON.parse(contact.dataset.inquiryProducts || "[]");
+        const slug = new URLSearchParams(window.location.search).get("slug");
+        // Resolve against published products instead of trusting a URL-supplied name.
+        const product = products.find((item) => item.slug === slug);
+        if (product) {
+          summary.textContent = `Inquiry about: ${product.name}`;
+          summary.hidden = false;
+          const params = new URLSearchParams({
+            subject: `Request a Quote: ${product.name}`,
+            body: `Product Name: ${product.name}\nProduct Slug: ${product.slug}\n\nPlease share your quantity, destination, and project requirements:\n`,
+          });
+          email.href = `${email.getAttribute("href")}?${params.toString().replace(/\+/g, "%20")}`;
+        }
+      }
+    </script>
   </main>
 </BaseLayout>

@@ -1,20 +1,24 @@
 ---
 import { Image } from "astro:assets";
 
-const { product, eager = false } = Astro.props;
+import type { Product } from "@/data/products";
+interface Props { product: Product; eager?: boolean; sizes?: string; }
+const { product, eager = false, sizes = "(min-width: 1280px) 390px, (min-width: 768px) calc((100vw - 112px) / 3), calc(100vw - 48px)" } = Astro.props;
 ---
 
 <a
-  href={`/products/${product.slug}`}
+  href={`/products/${product.slug}/`}
   class="group block space-y-4"
   data-product-card
 >
   <div class="aspect-[4/5] overflow-hidden rounded-[min(1vw,12px)] bg-paper">
     <Image
-      src={product.images[0]}
-      alt={`${product.name} — ${product.shortDescription}`}
-      width={1024}
-      height={1280}
+      src={product.images[0].src}
+      alt={product.images[0].alt ?? `${product.name} — ${product.shortDescription}`}
+      width={640}
+      height={800}
+      widths={[320, 480, 640, 800, 1024]}
+      sizes={sizes}
       loading={eager ? "eager" : "lazy"}
       decoding={eager ? "sync" : "async"}
       format="webp"

@@ -1,4 +1,5 @@
 ---
+import { siteConfig } from "@/config/site";
 import ProductCard from "@/components/ProductCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getProductFilters, getProducts } from "@/data/products.ts";
@@ -8,8 +9,8 @@ const { categories: allCategories } = getProductFilters(products);
 ---
 
 <BaseLayout
-  title="Catalogue — Lumavia Stone"
-  description="Browse Lumavia Stone natural stone products for gardens, landscapes, and architectural spaces."
+  title={`Catalogue — ${siteConfig.brandName}`}
+  description={`Browse ${siteConfig.brandName} natural stone products for gardens, landscapes, and architectural spaces.`}
 >
   <main id="main-content">
     <section class="mx-auto max-w-screen-xl px-6 pb-12 pt-20 md:pb-16 md:pt-28">
@@ -98,7 +99,8 @@ const { categories: allCategories } = getProductFilters(products);
             >
               <ProductCard
                 product={product}
-                eager={index < 3}
+                eager={index === 0}
+                sizes="(min-width: 1280px) 390px, (min-width: 1024px) calc((100vw - 112px) / 3), (min-width: 768px) calc((100vw - 80px) / 2), calc(100vw - 48px)"
               />
             </article>
           ))

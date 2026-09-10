@@ -186,3 +186,25 @@
 .fade-in {
   animation: fade-in 700ms ease both;
 }
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .group:hover img,
+  .group:hover [aria-hidden="true"],
+  a:active,
+  button:active {
+    transform: none !important;
+    scale: none !important;
+    translate: none !important;
+  }
+}

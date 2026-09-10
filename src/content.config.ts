@@ -15,7 +15,11 @@ const products = defineCollection({
       dimensions: z.string(),
       finish: z.string(),
       leadTime: z.string(),
-      images: z.array(image()).min(1),
+      // Existing path strings remain valid; new entries may provide { src, alt }.
+      images: z.array(z.union([
+        image().transform((src) => ({ src, alt: undefined as string | undefined })),
+        z.object({ src: image(), alt: z.string().optional() }),
+      ])).min(1),
       order: z.number().int().nonnegative().default(999),
     }),
 });

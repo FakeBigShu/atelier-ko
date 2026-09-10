@@ -13,6 +13,6 @@ images:
   - "../../assets/p-tora-1.jpg"
   - "../../assets/p-tora-2.jpg"
 order: 6
---------
+---
 
 A made-to-order natural stone piece developed around the requirements of your project. From dimensions and form to finish and carving details, each piece can be adapted to create a distinctive stone element for gardens, landscapes, architectural spaces, and bespoke projects.

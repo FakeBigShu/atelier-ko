@@ -1,5 +1,7 @@
+import { siteConfig } from "../config/site";
+
 export const GET = ({ site }) => {
-  const baseUrl = site ?? new URL("https://lumaviastone.com");
+  const baseUrl = site ?? new URL(siteConfig.siteUrl);
 
   return new Response(
     `User-agent: *

@@ -1,23 +1,24 @@
 ---
+import { siteConfig } from "@/config/site";
 const { currentPath = "/" } = Astro.props;
 
-const isActive = (href = "") => {
-  if (href === "/") return currentPath === "/";
-  return currentPath.startsWith(href);
+const normalizedPath = currentPath.replace(/\/+$/, "") || "/";
+
+const currentState = (href: string): "page" | "true" | undefined => {
+  const normalizedHref = href.replace(/\/+$/, "") || "/";
+  if (normalizedPath === normalizedHref) return "page";
+  if (normalizedHref === "/catalog" && normalizedPath.startsWith("/products/")) return "true";
+  return undefined;
 };
 
-const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/catalog", label: "Catalogue" },
-  { href: "/about", label: "About" },
-];
+const navItems = siteConfig.navigation;
 ---
 
 <nav class="sticky top-0 z-50 border-b border-line bg-base/80 backdrop-blur-md" aria-label="Main navigation">
   <div class="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-6">
 
-    <a href="/" class="font-serif text-xl italic tracking-tight" aria-label="Lumavia Stone home">
-      Lumavia Stone
+    <a href="/" class="font-serif text-xl italic tracking-tight" aria-label={`${siteConfig.brandName} home`} data-desktop-home>
+      {siteConfig.brandName}
     </a>
 
 
@@ -28,9 +29,9 @@ const navItems = [
             href={item.href}
             class:list={[
               "transition-colors hover:text-accent",
-              isActive(item.href) ? "text-ink" : "text-faded",
+              currentState(item.href) ? "text-ink" : "text-faded",
             ]}
-            aria-current={isActive(item.href) ? "page" : undefined}
+            aria-current={currentState(item.href)}
           >
             {item.label}
           </a>
@@ -43,7 +44,7 @@ const navItems = [
 
       <button
         type="button"
-        class="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:text-accent md:hidden"
+        class="hidden h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:text-accent md:hidden"
         aria-label="Open menu"
         aria-controls="mobile-menu"
         aria-expanded="false"
@@ -62,14 +63,17 @@ const navItems = [
     </div>
 
   </div>
+  <div class="flex flex-wrap gap-6 px-6 pb-4 text-sm md:hidden" data-mobile-fallback>
+    {navItems.map((item) => (
+      <a href={item.href} aria-current={currentState(item.href)}>{item.label}</a>
+    ))}
+  </div>
 </nav>
 
 
-<div
+<dialog
   id="mobile-menu"
-  class="fixed inset-0 z-[60] hidden h-dvh overflow-hidden bg-base text-ink md:hidden"
-  role="dialog"
-  aria-modal="true"
+  class="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto border-0 bg-base p-0 text-ink md:hidden"
   aria-label="Mobile menu"
   data-mobile-menu
 >
@@ -81,10 +85,10 @@ const navItems = [
       <a
         href="/"
         class="font-serif text-xl italic tracking-tight"
-        aria-label="Lumavia Stone home"
+        aria-label={`${siteConfig.brandName} home`}
         data-mobile-menu-link
       >
-        Lumavia Stone
+        {siteConfig.brandName}
       </a>
 
 
@@ -125,9 +129,9 @@ const navItems = [
               href={item.href}
               class:list={[
                 "block font-serif text-4xl leading-none transition-colors hover:text-accent",
-                isActive(item.href) ? "text-ink" : "text-faded",
+                currentState(item.href) ? "text-ink" : "text-faded",
               ]}
-              aria-current={isActive(item.href) ? "page" : undefined}
+              aria-current={currentState(item.href)}
               data-mobile-menu-link
             >
               {item.label}
@@ -147,11 +151,11 @@ const navItems = [
 
 
         <a
-          href="mailto:info@lumaviastone.com"
+          href={`mailto:${siteConfig.emails.info}`}
           class="block transition-colors hover:text-accent"
           data-mobile-menu-link
         >
-          info@lumaviastone.com
+          {siteConfig.emails.info}
         </a>
 
       </div>
@@ -161,83 +165,80 @@ const navItems = [
 
   </div>
 
-</div>
+</dialog>
 
 
 
-<script is:inline>
-(() => {
+<!-- Native modal dialog keeps keyboard focus and background interaction inside the menu. -->
+<script>
+  const menu = document.querySelector<HTMLDialogElement>("[data-mobile-menu]");
+  const openButton = document.querySelector<HTMLButtonElement>("[data-mobile-menu-open]");
+  const closeButton = document.querySelector<HTMLButtonElement>("[data-mobile-menu-close]");
+  const fallback = document.querySelector<HTMLElement>("[data-mobile-fallback]");
+  if (menu && openButton && closeButton && typeof menu.showModal === "function") {
+    const desktop = window.matchMedia("(min-width: 48rem)");
+    let previousOverflow = "";
+    let previousBodyOverflow = "";
+    let locked = false;
 
-  const menu = document.querySelector("[data-mobile-menu]");
-  const openButton = document.querySelector("[data-mobile-menu-open]");
-  const closeButton = document.querySelector("[data-mobile-menu-close]");
-
-
-  if (!menu || !openButton || !closeButton) return;
-
-
-  function openMenu(){
-
-    menu.classList.remove("hidden");
-
-    openButton.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-
-    document.documentElement.style.overflow="hidden";
-
-  }
-
-
-  function closeMenu(){
-
-    menu.classList.add("hidden");
-
-    openButton.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-    document.documentElement.style.overflow="";
-
-  }
-
-
-  openButton.addEventListener(
-    "click",
-    openMenu
-  );
-
-
-  closeButton.addEventListener(
-    "click",
-    closeMenu
-  );
-
-
-  menu.querySelectorAll("[data-mobile-menu-link]")
-    .forEach((link)=>{
-
-      link.addEventListener(
-        "click",
-        closeMenu
-      );
-
-    });
-
-
-  document.addEventListener(
-    "keydown",
-    (event)=>{
-
-      if(event.key==="Escape"){
-        closeMenu();
-      }
-
+    function restorePage() {
+      if (!locked) return;
+      document.documentElement.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      locked = false;
+      openButton!.setAttribute("aria-expanded", "false");
+      const target = desktop.matches
+        ? document.querySelector<HTMLElement>("[data-desktop-home]")
+        : openButton;
+      target?.focus({ preventScroll: true });
     }
-  );
 
+    function closeMenu() {
+      if (!menu!.open) return;
+      menu!.close();
+      restorePage();
+    }
 
-})();
+    openButton.addEventListener("click", () => {
+      if (desktop.matches || menu.open) return;
+      previousOverflow = document.documentElement.style.overflow;
+      previousBodyOverflow = document.body.style.overflow;
+      menu.showModal();
+      locked = true;
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      openButton.setAttribute("aria-expanded", "true");
+      closeButton.focus({ preventScroll: true });
+    });
+    closeButton.addEventListener("click", closeMenu);
+    menu.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeMenu();
+    });
+    menu.addEventListener("close", () => {
+      if (!menu.open) restorePage();
+    });
+    menu.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const controls = Array.from(menu.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"));
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    });
+    menu.querySelectorAll("[data-mobile-menu-link]").forEach((link) => {
+      link.addEventListener("click", closeMenu);
+    });
+    desktop.addEventListener("change", () => {
+      if (desktop.matches) closeMenu();
+    });
+    // Keep real navigation available until progressive enhancement has initialized.
+    if (fallback) fallback.hidden = true;
+    openButton.classList.replace("hidden", "inline-flex");
+  }
 </script>

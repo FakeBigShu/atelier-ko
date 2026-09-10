@@ -1,8 +1,9 @@
 ---
+import { siteConfig } from "@/config/site";
 const year = new Date().getFullYear();
 ---
 
-<footer id="studio" class="mt-32 border-t border-line py-24">
+<footer class="mt-32 border-t border-line py-24">
 
   <div class="mx-auto grid max-w-screen-xl grid-cols-1 gap-12 px-6 md:grid-cols-3">
 
@@ -12,7 +13,7 @@ const year = new Date().getFullYear();
     <div class="space-y-4">
 
       <div class="font-serif text-lg italic tracking-tight">
-        Lumavia Stone
+        {siteConfig.brandName}
       </div>
 
       <p class="max-w-[32ch] text-sm leading-relaxed text-faded">
@@ -37,7 +38,7 @@ const year = new Date().getFullYear();
 
         <li>
           <a
-            href="/contact"
+            href={siteConfig.contactPath}
             class="text-faded transition-colors hover:text-ink"
           >
             Product Inquiry
@@ -47,7 +48,7 @@ const year = new Date().getFullYear();
 
         <li>
           <a
-            href="/contact"
+            href={siteConfig.contactPath}
             class="text-faded transition-colors hover:text-ink"
           >
             Custom Stone Carving
@@ -57,7 +58,7 @@ const year = new Date().getFullYear();
 
         <li>
           <a
-            href="/about"
+            href="/about/"
             class="text-faded transition-colors hover:text-ink"
           >
             About Lumavia
@@ -71,12 +72,12 @@ const year = new Date().getFullYear();
 
 
 
-    <!-- Follow -->
+    <!-- Explore -->
 
     <div class="space-y-4">
 
       <h2 class="text-xs font-medium uppercase tracking-widest">
-        Follow
+        Explore
       </h2>
 
 
@@ -84,32 +85,13 @@ const year = new Date().getFullYear();
 
         <li>
           <a
-            href="#"
-            class="text-faded transition-colors hover:text-ink"
-          >
-            Instagram
-          </a>
-        </li>
-
-
-        <li>
-          <a
-            href="/catalog"
+            href="/catalog/"
             class="text-faded transition-colors hover:text-ink"
           >
             Collections
           </a>
         </li>
 
-
-        <li>
-          <a
-            href="/blog"
-            class="text-faded transition-colors hover:text-ink"
-          >
-            Journal
-          </a>
-        </li>
 
       </ul>
 
@@ -126,7 +108,7 @@ const year = new Date().getFullYear();
     class="mx-auto mt-16 max-w-screen-xl px-6 text-[10px] uppercase tracking-[0.2em] text-faded"
   >
 
-    © {year} Lumavia Stone — Natural Stone & Garden Sculptures.
+    © {year} {siteConfig.brandName} — Natural Stone & Garden Sculptures.
 
   </div>
 

@@ -13,6 +13,6 @@ images:
   - "../../assets/p-plinth-1.jpg"
   - "../../assets/p-plinth-2.jpg"
 order: 3
---------
+---
 
 A sculpted natural stone bird bath designed as a quiet focal point for gardens and outdoor spaces. Its simple form combines function and permanence, creating a natural place for birds while adding texture and character to the landscape.
