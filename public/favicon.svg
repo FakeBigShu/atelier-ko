@@ -1,6 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Lumavia Stone">
-  <rect width="64" height="64" rx="16" fill="#f8f7f4"/>
-  <rect x="5.5" y="5.5" width="53" height="53" rx="12.5" fill="none" stroke="#27272a" stroke-opacity=".14"/>
-  <path d="M17.5 47 30.3 16.5h3.5L46.5 47h-5.1l-3.1-7.7H25.5L22.5 47h-5Zm9.6-11.7h9.6L32 23.2l-4.9 12.1Z" fill="#27272a"/>
-  <path d="M28.4 43.6h7.2" stroke="#5a2d10" stroke-width="2.4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Lumavia Stone</title>
+  <rect width="64" height="64" rx="12" fill="#EDE6DC"/>
+
+  <!-- Simplified path version of the serif L from the supplied Lumavia mark. -->
+  <path fill="#2F2F2F" d="M17 14h17v3.8h-4.4v25.6c0 1.7-.5 3.1-1.4 4.2 2.8-1.3 5-2.5 6.6-3.7 2.8-2 5.7-3.1 8.7-3.1 3.5 0 6.6 1.2 9.6 3.7l2.8 2.4v3.8H17v-4h4.5V17.8H17V14Z"/>
+
+  <!-- The original three overlapping flowing forms, simplified for favicon scale. -->
+  <path fill="#A68F76" d="M30.2 39.8c3.1-5.7 5.6-10 7.6-12.7 2.7 1.2 5.9 3.7 8.5 7.8-4.7-1.3-9.2.2-16.1 4.9Z"/>
+  <path fill="#9A8268" d="M28.5 43.4c6.3-5.6 11.5-8.3 15.6-8.3 4.8 0 8.6 2.2 11.7 6.1-4.3 1.7-8.5 1.4-12.9-.4-4.4-1.8-8.9-.8-14.4 2.6Z"/>
+  <path fill="#A68F76" d="M27.2 47c7.2-4.5 13.5-5.5 18.8-2.9 5.5 2.7 9.4 3.1 12 1.4-1.4 4-5.8 6.5-10.9 6.8-5.8.3-10.2-2.9-14.4-5-2.2-1.1-4-1.2-5.5-.3Z"/>
 </svg>
