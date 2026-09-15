@@ -2,10 +2,10 @@
 import { siteConfig } from "@/config/site";
 import ProductBody from "@/components/ProductBody.astro";
 import { pageUrl } from "@/utils/urls";
-import { Image } from "astro:assets";
+import ProductImage from "@/components/ProductImage.astro";
 import ProductCard from "@/components/ProductCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { formatPrice, getProducts, getRelated } from "@/data/products.js";
+import { confirmedValue, getProducts, getRelated } from "@/data/products.js";
 
 export async function getStaticPaths() {
   const products = await getProducts();
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 }
 
 const { product, related } = Astro.props;
-const quoteParams = new URLSearchParams({ product: product.name, slug: product.slug });
+const quoteParams = new URLSearchParams({ product: product.name, slug: product.slug, sku: product.sku });
 const [contactPage, contactAnchor] = siteConfig.contactPath.split("#");
 const quoteHref = `${contactPage}?${quoteParams}#${contactAnchor}`;
 
@@ -28,6 +28,13 @@ const productUrl = pageUrl(
   `/products/${product.slug}/`,
   Astro.site ?? Astro.url.origin,
 ).href;
+const specifications = [
+  ["Material", confirmedValue(product.material)],
+  ["Dimensions (cm)", confirmedValue(product.dimensions)],
+  ["Finish", confirmedValue(product.finish)],
+  ["Application", confirmedValue(product.application)],
+  ["Customization", typeof product.customizable === "boolean" ? (product.customizable ? "Available" : "Not available") : undefined],
+].filter(([, value]) => value);
 ---
 
 <BaseLayout
@@ -38,7 +45,7 @@ const productUrl = pageUrl(
   <main id="main-content">
     <div class="mx-auto max-w-screen-xl px-6 pt-8">
       <nav
-        class="flex gap-2 text-xs uppercase tracking-widest text-faded"
+        class="flex flex-wrap gap-2 text-xs uppercase tracking-widest text-faded"
         aria-label="Breadcrumb"
       >
         <a href="/catalog/" class="hover:text-ink">Catalogue</a>
@@ -68,17 +75,12 @@ const productUrl = pageUrl(
                   ]}
                   data-gallery-panel={index}
                 >
-                  <Image
-                    src={image.src}
-                    alt={image.alt ?? `${product.name} — view ${index + 1}`}
-                    width={800}
-                    height={1000}
-                    widths={[400, 640, 800, 1024, 1440]}
+                  <ProductImage
+                    image={image}
                     sizes="(min-width: 1280px) 692px, (min-width: 1024px) calc((100vw - 112px) * 7 / 12), calc(100vw - 48px)"
                     fetchpriority={index === 0 ? "high" : "auto"}
-                    format="webp"
                     loading={index === 0 ? "eager" : "lazy"}
-                    class="fade-in h-full w-full object-cover"
+                    class="fade-in h-full w-full object-contain"
                   />
                 </div>
               ))
@@ -97,17 +99,14 @@ const productUrl = pageUrl(
                       : "ring-line hover:ring-ink/40",
                   ]}
                   data-gallery-thumb={index}
-                  aria-label={`Show view ${index + 1}`}
+                  aria-label={`Show ${image.alt}`}
                   aria-pressed={index === 0 ? "true" : "false"}
                 >
-                  <Image
-                    src={image.src}
+                  <img
+                    src={(image.thumbnail ?? image.src).src}
                     alt=""
-                    width={360}
-                    height={360}
-                    widths={[120, 240, 360, 480]}
-                    sizes="(min-width: 1280px) 220px, (min-width: 1024px) calc((100vw - 176px) * 7 / 36), calc((100vw - 80px) / 3)"
-                    format="webp"
+                    width={(image.thumbnail ?? image.src).width}
+                    height={(image.thumbnail ?? image.src).height}
                     loading="lazy"
                     class="h-full w-full object-cover"
                   />
@@ -123,7 +122,7 @@ const productUrl = pageUrl(
         >
           <div class="space-y-4">
             <div class="text-xs uppercase tracking-widest text-faded">
-              {product.collection}
+              {product.category}
             </div>
 
             <h1
@@ -132,43 +131,24 @@ const productUrl = pageUrl(
               {product.name}
             </h1>
 
-            <p class="font-serif text-2xl">
-              {formatPrice(product.price)}
-            </p>
+            <p class="text-xs tracking-widest text-faded">SKU: {product.sku}</p>
+            {product.subcategory && <p class="text-sm text-faded">{product.subcategory}</p>}
           </div>
 
           <div class="space-y-6">
             <ProductBody product={product} class="max-w-[44ch] text-pretty leading-relaxed text-faded" />
 
-            <dl class="space-y-3">
-              <div
-                class="flex justify-between border-b border-line py-2 text-sm"
-              >
-                <dt class="text-faded">Material</dt>
-                <dd>{product.material}</dd>
-              </div>
-
-              <div
-                class="flex justify-between border-b border-line py-2 text-sm"
-              >
-                <dt class="text-faded">Dimensions</dt>
-                <dd>{product.dimensions}</dd>
-              </div>
-
-              <div
-                class="flex justify-between border-b border-line py-2 text-sm"
-              >
-                <dt class="text-faded">Finish</dt>
-                <dd>{product.finish}</dd>
-              </div>
-
-              <div
-                class="flex justify-between border-b border-line py-2 text-sm"
-              >
-                <dt class="text-faded">Lead Time</dt>
-                <dd>{product.leadTime}</dd>
-              </div>
-            </dl>
+            {specifications.length > 0 && <dl class="space-y-3">
+              {specifications.map(([label, value]) => (
+                <div class="flex justify-between gap-6 border-b border-line py-2 text-sm">
+                  <dt class="shrink-0 text-faded">{label}</dt>
+                  <dd class="min-w-0 text-right">{value}</dd>
+                </div>
+              ))}
+            </dl>}
+            {confirmedValue(product.dimensions) && product.verificationStatus === "Pending Verification" && (
+              <p class="text-xs text-faded">Approximate photo-derived dimensions; pending supplier verification.</p>
+            )}
           </div>
 
           <a
@@ -227,15 +207,10 @@ const productUrl = pageUrl(
           "@type": "Brand",
           name: siteConfig.brandName,
         },
-        material: product.material,
+        sku: product.sku,
+        category: product.category,
+        material: confirmedValue(product.material),
         url: productUrl,
-        offers: {
-          "@type": "Offer",
-          priceCurrency: "USD",
-          price: product.price,
-          availability: "https://schema.org/PreOrder",
-          url: productUrl,
-        },
       })}
     ></script>
 

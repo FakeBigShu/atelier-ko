@@ -12,7 +12,7 @@ function byOrderThenName(a: Product, b: Product): number {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const entries = await getCollection("products");
+  const entries = await getCollection("products", ({ data }) => data.published);
   return entries
     .map((entry: ProductEntry) => ({
       slug: slugFromEntry(entry),
@@ -44,10 +44,7 @@ export function getProductFilters(products: Product[]): {
   };
 }
 
-export function formatPrice(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
+/** Keep unverified values in content, but do not present them as specifications. */
+export function confirmedValue(value: string | undefined): string | undefined {
+  return value && value.trim().toLowerCase() !== "to be confirmed" ? value : undefined;
 }

@@ -2,43 +2,24 @@
 import { siteConfig } from "@/config/site";
 import ProductBody from "@/components/ProductBody.astro";
 import { pageUrl } from "@/utils/urls";
-import { Image, getImage } from "astro:assets";
+import ProductImage from "@/components/ProductImage.astro";
 import ProductCard from "@/components/ProductCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import heroImg from "@/assets/atelier-hero.jpg";
-import { formatPrice, getProducts } from "@/data/products.ts";
+import { getProducts } from "@/data/products.ts";
 
 const products = await getProducts();
-const [mobileHero, desktopHero] = await Promise.all([
-  getImage({ src: heroImg, width: 1600, height: 1280, widths: [480, 768, 1024, 1600], format: "webp" }),
-  getImage({ src: heroImg, width: 2000, height: 1400, widths: [1024, 1440, 1920, 2000], format: "webp" }),
-]);
-
-const featuredSlugs = [
-  "stone-planter",
-  "bird-bath",
-  "custom-stone-piece",
-];
-
-const featured = featuredSlugs
-  .map((slug) => products.find((product) => product.slug === slug))
-  .filter(
-    (product): product is NonNullable<typeof product> => product != null,
-  );
-
-const solo = products.find(
-  (product) => product.slug === "animal-statue",
-);
-
-if (!solo) {
-  throw new Error("Missing required featured product: animal-statue");
+const featured = products.filter((product) => product.featured);
+const hero = featured[0];
+const solo = featured.find((product) => product.sku === "CS-0019") ?? hero;
+if (!hero || !solo) {
+  throw new Error("The homepage requires a published featured product.");
 }
 ---
 
 <BaseLayout
   title={`${siteConfig.brandName} — ${siteConfig.tagline}`}
   description="Natural stone products, garden sculpture, and custom stone carving for gardens, landscapes, and architectural spaces."
-  image={heroImg}
+  image={hero.images[0].src}
 >
   <main id="main-content">
 
@@ -53,22 +34,16 @@ if (!solo) {
 
     <section class="relative overflow-hidden bg-base">
 
-      <!-- One image element; media sources preserve the original mobile/desktop framing. -->
-      <picture class="block aspect-[4/3] w-full md:absolute md:inset-0 md:aspect-auto">
-        <source media="(min-width: 768px)" srcset={desktopHero.srcSet.attribute} sizes="100vw" width={2000} height={1400} />
-        <img
-          src={mobileHero.src}
-          srcset={mobileHero.srcSet.attribute}
-          sizes="100vw"
-          width={1600}
-          height={1280}
-          alt="Natural stone sculpture in an outdoor setting"
+      <!-- One prepared image preserves the full product without creating another crop. -->
+      <div class="block aspect-[4/3] w-full md:absolute md:inset-0 md:aspect-auto">
+        <ProductImage
+          image={hero.images[0]}
+          sizes="(min-width: 768px) 60vw, 100vw"
           loading="eager"
           fetchpriority="high"
-          decoding="async"
-          class="h-full w-full object-cover object-right"
+          class="h-full w-full object-contain md:object-right"
         />
-      </picture>
+      </div>
 
       <!-- Mobile Hero content -->
       <div class="md:hidden">
@@ -232,11 +207,11 @@ if (!solo) {
         >
 
           <span>
-            No. 01 — Stone Planter
+            {hero.name}
           </span>
 
           <span class="text-faded">
-            Natural Stone · Garden Collection
+            {hero.category}
           </span>
 
         </div>
@@ -338,16 +313,11 @@ if (!solo) {
               class="group block aspect-[5/4] overflow-hidden rounded-[min(1vw,16px)] bg-paper md:aspect-[16/11]"
             >
 
-              <Image
-                src={solo.images[0].src}
-                alt={solo.images[0].alt ?? `${solo.name} — ${solo.shortDescription}`}
-                width={960}
-                height={660}
-                widths={[400, 640, 960, 1280, 1600]}
+              <ProductImage
+                image={solo.images[0]}
                 sizes="(min-width: 1536px) 960px, (min-width: 1024px) calc((100vw - 112px) * 2 / 3), (min-width: 768px) calc((100vw - 112px) * 7 / 12), calc(100vw - 48px)"
                 loading="lazy"
-                format="webp"
-                class="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.02]"
+                class="h-full w-full object-contain transition-transform duration-[1400ms] ease-out group-hover:scale-[1.02]"
               />
 
             </a>
@@ -363,7 +333,7 @@ if (!solo) {
 
               <span class="inline-block h-px w-8 bg-ink/40"></span>
 
-              Sculpture Collection
+              {solo.category}
 
             </p>
 
@@ -371,11 +341,7 @@ if (!solo) {
             <h2
               class="text-balance font-serif text-4xl leading-[1.02] md:text-5xl"
             >
-              Stone with character.
-
-              <span class="italic text-accent">
-                Made to endure.
-              </span>
+              {solo.name}
             </h2>
 
 
@@ -389,45 +355,25 @@ if (!solo) {
               <dt
                 class="pt-3 uppercase tracking-[0.2em] text-faded"
               >
-                Dimensions
+                SKU
               </dt>
 
               <dd class="pt-3">
-                {solo.dimensions}
+                {solo.sku}
               </dd>
 
 
               <dt
                 class="uppercase tracking-[0.2em] text-faded"
               >
-                Finish
+                Category
               </dt>
 
               <dd>
-                {solo.finish}
+                {solo.category}
               </dd>
 
 
-              <dt
-                class="uppercase tracking-[0.2em] text-faded"
-              >
-                Lead time
-              </dt>
-
-              <dd>
-                {solo.leadTime}
-              </dd>
-
-
-              <dt
-                class="uppercase tracking-[0.2em] text-faded"
-              >
-                From
-              </dt>
-
-              <dd class="tabular-nums">
-                {formatPrice(solo.price)}
-              </dd>
 
             </dl>
 

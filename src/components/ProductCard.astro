@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
+import ProductImage from "@/components/ProductImage.astro";
 
-import type { Product } from "@/data/products";
+import { confirmedValue, type Product } from "@/data/products";
 interface Props { product: Product; eager?: boolean; sizes?: string; }
 const { product, eager = false, sizes = "(min-width: 1280px) 390px, (min-width: 768px) calc((100vw - 112px) / 3), calc(100vw - 48px)" } = Astro.props;
 ---
@@ -12,16 +12,10 @@ const { product, eager = false, sizes = "(min-width: 1280px) 390px, (min-width: 
   data-product-card
 >
   <div class="aspect-[4/5] overflow-hidden rounded-[min(1vw,12px)] bg-paper">
-    <Image
-      src={product.images[0].src}
-      alt={product.images[0].alt ?? `${product.name} — ${product.shortDescription}`}
-      width={640}
-      height={800}
-      widths={[320, 480, 640, 800, 1024]}
+    <ProductImage
+      image={product.catalogueImage ?? product.images[0]}
       sizes={sizes}
       loading={eager ? "eager" : "lazy"}
-      decoding={eager ? "sync" : "async"}
-      format="webp"
       class="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
     />
   </div>
@@ -29,9 +23,10 @@ const { product, eager = false, sizes = "(min-width: 1280px) 390px, (min-width: 
   <div class="flex items-start justify-between gap-4">
     <div>
       <h2 class="text-sm font-medium">{product.name}</h2>
+      <p class="text-xs text-faded">{product.category}</p>
       <p class="text-xs text-faded">{product.shortDescription}</p>
     </div>
 
-    <span class="text-xs text-faded">{product.material}</span>
+    {confirmedValue(product.material) && <span class="text-xs text-faded">{product.material}</span>}
   </div>
 </a>

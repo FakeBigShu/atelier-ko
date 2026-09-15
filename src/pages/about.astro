@@ -5,7 +5,7 @@ import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import handsImg from "@/assets/atelier-hands.jpg";
 import workshopImg from "@/assets/atelier-workshop.jpg";
-const inquiryProducts = (await getProducts()).map(({ name, slug }) => ({ name, slug }));
+const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ name, slug, sku }));
 ---
 
 <BaseLayout
@@ -282,7 +282,7 @@ const inquiryProducts = (await getProducts()).map(({ name, slug }) => ({ name, s
       const summary = contact?.querySelector<HTMLElement>("[data-inquiry-summary]");
       const email = contact?.querySelector<HTMLAnchorElement>("[data-inquiry-email]");
       if (contact && summary && email) {
-        const products: { name: string; slug: string }[] = JSON.parse(contact.dataset.inquiryProducts || "[]");
+        const products: { name: string; slug: string; sku: string }[] = JSON.parse(contact.dataset.inquiryProducts || "[]");
         const slug = new URLSearchParams(window.location.search).get("slug");
         // Resolve against published products instead of trusting a URL-supplied name.
         const product = products.find((item) => item.slug === slug);
@@ -291,7 +291,7 @@ const inquiryProducts = (await getProducts()).map(({ name, slug }) => ({ name, s
           summary.hidden = false;
           const params = new URLSearchParams({
             subject: `Request a Quote: ${product.name}`,
-            body: `Product Name: ${product.name}\nProduct Slug: ${product.slug}\n\nPlease share your quantity, destination, and project requirements:\n`,
+            body: `Product Name: ${product.name}\nSKU: ${product.sku}\nProduct Slug: ${product.slug}\n\nPlease share your quantity, destination, and project requirements:\n`,
           });
           email.href = `${email.getAttribute("href")}?${params.toString().replace(/\+/g, "%20")}`;
         }
