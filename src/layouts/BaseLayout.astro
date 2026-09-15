@@ -9,6 +9,7 @@ const {
   title = `${siteConfig.brandName} — ${siteConfig.tagline}`,
   description = siteConfig.description,
   image,
+  imageAlt,
   noindex = false,
   includeHeader = true,
   includeFooter = true,
@@ -104,6 +105,7 @@ const ogImage = socialImage
         content={ogImage}
       />
     )}
+    {ogImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
 
     <meta
       name="twitter:card"
@@ -126,6 +128,7 @@ const ogImage = socialImage
         content={ogImage}
       />
     )}
+    {ogImage && imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
 
 
   </head>

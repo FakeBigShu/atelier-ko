@@ -1,17 +1,17 @@
 ---
 import { siteConfig } from "@/config/site";
 import { getProducts } from "@/data/products";
-import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import handsImg from "@/assets/atelier-hands.jpg";
-import workshopImg from "@/assets/atelier-workshop.jpg";
-const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ name, slug, sku }));
+const products = await getProducts();
+const inquiryProducts = products.map(({ name, slug, sku }) => ({ name, slug, sku }));
+const socialProduct = products.find(({ sku }) => sku === "GF-0001");
 ---
 
 <BaseLayout
   title={`About — ${siteConfig.brandName}`}
-  description={`Learn about ${siteConfig.brandName}, our natural stone craftsmanship, and our approach to garden sculpture, landscape products, and custom stone carving in Quyang, China.`}
-  image={workshopImg}
+  description={`${siteConfig.brandName} is a Quyang-based natural stone sourcing and product supply brand for international buyers, with a focus on garden, landscape and architectural products.`}
+  image={socialProduct?.images[0].src}
+  imageAlt={socialProduct ? `${siteConfig.brandName} product: ${socialProduct.name}` : undefined}
 >
   <main id="main-content">
 
@@ -28,34 +28,15 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
       </h1>
 
       <p class="mt-8 max-w-[58ch] text-lg leading-relaxed text-faded">
-        {siteConfig.brandName} is a natural stone supplier and stone craftsmanship
-        company based in Quyang, China. We develop and supply stone products
-        for gardens, landscapes, architectural spaces, and custom projects.
-        Our work combines traditional stone craftsmanship with practical
-        requirements for international projects.
+        {siteConfig.brandName} is a Quyang-based natural stone sourcing and product
+        supply brand. We source and present products for international buyers,
+        with a focus on gardens, landscapes, and architectural settings.
       </p>
 
     </section>
 
 
-    <section class="relative w-full">
-
-      <Image
-        src={workshopImg}
-        alt="Stone craftsmanship workshop in Quyang, China"
-        width={1280}
-        height={720}
-        widths={[480, 768, 1280, 1600, 1920]}
-        sizes="100vw"
-        format="webp"
-        loading="eager"
-        class="h-[50vh] w-full object-cover md:h-[70vh]"
-      />
-
-    </section>
-
-
-    <section class="mx-auto mt-24 grid max-w-screen-xl gap-10 px-6 md:mt-32 md:grid-cols-12 md:gap-16">
+    <section class="mx-auto mt-12 grid max-w-screen-xl gap-10 px-6 md:mt-16 md:grid-cols-12 md:gap-16">
 
       <div class="md:col-span-5">
 
@@ -64,7 +45,7 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
         </p>
 
         <h2 class="text-balance font-serif text-3xl leading-[1.02] md:text-5xl">
-          Rooted in a long tradition of stone carving.
+          Sourcing from Quyang.
         </h2>
 
       </div>
@@ -73,17 +54,14 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
       <div class="space-y-6 leading-relaxed text-faded md:col-span-6 md:col-start-7">
 
         <p>
-          Quyang has a long history of stone carving and sculpture.
-          Generations of craftsmen have developed techniques for shaping,
-          carving, finishing, and working with natural stone.
+          Based in Quyang, Hebei, China, we work with local suppliers and
+          workshops in a region known for its stone-carving tradition.
         </p>
 
         <p>
-          {siteConfig.brandName} builds on this craftsmanship while focusing on the
-          needs of today's international buyers. We work with selected
-          workshops and stone craftsmen to develop products that combine
-          natural materials, reliable production, and practical requirements
-          for gardens, landscapes, and architectural projects.
+          Our focus is product selection and supply enquiries. We present
+          available product information and discuss individual requirements
+          with suppliers and international buyers.
         </p>
 
       </div>
@@ -103,18 +81,18 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
           [
             {
               n: "01",
-              h: "Natural stone, first",
-              p: "We work with natural stone selected for its character, durability, color, texture, and suitability for the intended application.",
+              h: "Product selection",
+              p: "We source and present natural stone products through local suppliers and workshops, with a focus on garden, landscape, and architectural product directions.",
             },
             {
               n: "02",
-              h: "Craftsmanship matters",
-              p: "Traditional stone carving skills remain at the center of our work. Cutting, shaping, carving, and finishing are carried out with attention to detail.",
+              h: "Product information",
+              p: "Material, dimensions, finish, and other specifications need to be confirmed for individual products and enquiries.",
             },
             {
               n: "03",
-              h: "Made for real projects",
-              p: "From individual garden pieces to larger landscape and architectural projects, we focus on practical dimensions, finishes, packaging, and production requirements.",
+              h: "Custom enquiries",
+              p: "Custom enquiries are reviewed case by case. Feasibility depends on the product, dimensions, stone, supplier capability, and project requirements.",
             },
           ].map((block) => (
             <div class="space-y-3">
@@ -142,30 +120,9 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
 
     <section class="mt-24 md:mt-32">
 
-      <div class="mx-auto grid max-w-screen-2xl items-center gap-10 px-6 md:grid-cols-12 md:gap-16">
+      <div class="mx-auto grid max-w-screen-xl gap-10 px-6 md:grid-cols-12 md:gap-16">
 
-        <div class="md:col-span-5">
-
-          <div class="aspect-[3/4] overflow-hidden rounded-[min(1vw,12px)] bg-paper">
-
-            <Image
-              src={handsImg}
-              alt="Craftsman's hands working on a natural stone piece"
-              width={720}
-              height={960}
-              widths={[360, 540, 720, 1080]}
-              sizes="(min-width: 1536px) 583px, (min-width: 768px) calc((100vw - 112px) * 5 / 12), calc(100vw - 48px)"
-              format="webp"
-              loading="lazy"
-              class="h-full w-full object-cover"
-            />
-
-          </div>
-
-        </div>
-
-
-        <div class="space-y-8 md:col-span-6 md:col-start-7">
+        <div class="space-y-8 md:col-span-8 md:col-start-3">
 
           <p class="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-faded">
 
@@ -178,10 +135,9 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
 
           <blockquote class="text-balance font-serif text-3xl leading-[1.15] md:text-4xl">
 
-            "Every piece begins with the stone itself —
-            its shape, texture, color, and natural character
+            "We look to stone's form, texture, and character
             <span class="italic text-accent">
-              guide what the finished piece can become.
+              as a starting point for product selection.
             </span>"
 
           </blockquote>
@@ -195,9 +151,8 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
           <div class="space-y-3 border-t border-line pt-6 text-sm leading-relaxed text-faded">
 
             <p>
-              We work with natural stone selected for different applications,
-              from garden planters and bird baths to sculptures, fountains,
-              spheres, and custom stone pieces.
+              The current catalogue presents planters, garden fountains,
+              spheres, animal statues, and stone benches.
             </p>
 
           </div>
@@ -211,29 +166,13 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
 
     <section class="mx-auto mt-24 max-w-screen-xl border-y border-line px-6 py-12 md:mt-32">
 
-      <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
-
-        {
-          [
-            { n: "01", l: "Stone Craftsmanship" },
-            { n: String(inquiryProducts.length).padStart(2, "0"), l: "Current Product Types" },
-            { n: "100%", l: "Natural Stone Focus" },
-            { n: "8–10", l: "Typical Lead Time" },
-          ].map((stat) => (
-            <div class="space-y-2">
-
-              <p class="font-serif text-4xl tabular-nums md:text-5xl">
-                {stat.n}
-              </p>
-
-              <p class="text-[10px] uppercase tracking-[0.3em] text-faded">
-                {stat.l}
-              </p>
-
-            </div>
-          ))
-        }
-
+      <div class="space-y-2 text-center">
+        <p class="font-serif text-4xl tabular-nums md:text-5xl">
+          {String(products.length).padStart(2, "0")}
+        </p>
+        <p class="text-[10px] uppercase tracking-[0.3em] text-faded">
+          Products in the Catalogue
+        </p>
       </div>
 
     </section>
@@ -247,8 +186,11 @@ const inquiryProducts = (await getProducts()).map(({ name, slug, sku }) => ({ na
 
           <h2 class="max-w-[20ch] text-balance font-serif text-3xl leading-[1.02] md:text-5xl">
             Explore our collections,
-            or begin with a custom stone project.
+            or discuss a custom requirement.
           </h2>
+          <p class="mt-4 max-w-[48ch] text-sm leading-relaxed text-faded">
+            Custom feasibility and specifications are confirmed case by case.
+          </p>
           <p hidden data-inquiry-summary class="mt-4 text-sm text-faded" aria-live="polite"></p>
 
         </div>
