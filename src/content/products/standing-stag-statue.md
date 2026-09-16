@@ -1,6 +1,5 @@
 ---
 # Dimensions restored from the user-provided approximate value; verification unchanged.
-# Unpublished: missing catalogue and product-detail website assets.
 sku: "AS-0002"
 name: "Standing Stag Statue"
 category: "Animal Statues"
@@ -14,9 +13,42 @@ shortDescription: "Standing stag garden statue."
 verificationStatus: "Pending Verification"
 launchStatus: "Launch Candidate"
 featured: true
-published: false
+published: true
 order: 13
-images: []
+images:
+  -
+    src: "../../assets/products/AS-0002/products/responsive/AS-0002-main-1440w.webp"
+    alt: "Standing Stag Statue"
+    variants:
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-main-400w.webp"
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-main-800w.webp"
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-main-1440w.webp"
+    thumbnail: "../../assets/products/AS-0002/products/thumbnails/AS-0002-main.webp"
+  -
+    src: "../../assets/products/AS-0002/products/responsive/AS-0002-alternate-01-1440w.webp"
+    alt: "Standing Stag Statue, alternate view"
+    variants:
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-alternate-01-400w.webp"
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-alternate-01-800w.webp"
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-alternate-01-1440w.webp"
+    thumbnail: "../../assets/products/AS-0002/products/thumbnails/AS-0002-alternate-01.webp"
+  -
+    src: "../../assets/products/AS-0002/products/responsive/AS-0002-detail-01-1440w.webp"
+    alt: "Standing Stag Statue detail"
+    variants:
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-detail-01-400w.webp"
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-detail-01-800w.webp"
+      - "../../assets/products/AS-0002/products/responsive/AS-0002-detail-01-1440w.webp"
+    thumbnail: "../../assets/products/AS-0002/products/thumbnails/AS-0002-detail-01.webp"
+catalogueImage:
+  src: "../../assets/products/AS-0002/catalogue/AS-0002-main-640w.webp"
+  alt: "Standing Stag Statue"
+  variants:
+    - "../../assets/products/AS-0002/catalogue/AS-0002-main-320w.webp"
+    - "../../assets/products/AS-0002/catalogue/AS-0002-main-480w.webp"
+    - "../../assets/products/AS-0002/catalogue/AS-0002-main-640w.webp"
+    - "../../assets/products/AS-0002/catalogue/AS-0002-main-800w.webp"
+    - "../../assets/products/AS-0002/catalogue/AS-0002-main-1024w.webp"
 ---
 
 Standing stag garden statue.
